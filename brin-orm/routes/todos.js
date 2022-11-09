@@ -1,15 +1,15 @@
 var express = require('express');
 var router = express.Router();
-const { User, Todo, sequelize } = require('../models/index')
+const { User, Todo } = require('../models/index')
 
 router.get('/', async function (req, res, next) {
   try {
-    const users = await User.findAll({
+    const todos = await Todo.findAll({
       include: [{
-          model: Todo
+          model: User
         }]
     })
-    res.json(users)
+    res.json(todos)
   } catch (e) {
     console.log(e)
     res.send(e)
@@ -18,8 +18,8 @@ router.get('/', async function (req, res, next) {
 
 router.get('/:id', async function (req, res, next) {
   try {
-    const user = await User.findByPk(req.params.id)
-    res.json(user)
+    const todo = await Todo.findByPk(req.params.id)
+    res.json(todo)
   } catch (e) {
     console.log(e)
     res.send(e)
@@ -28,10 +28,9 @@ router.get('/:id', async function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
   try {
-    const { name } = req.body
-
-    const user = await User.create({ name });
-    res.json(user)
+    const { title, executor } = req.body
+    const todo = await Todo.create({ title, executor })
+    res.json(todo)
   } catch (e) {
     console.log(e)
     res.send(e)
@@ -40,10 +39,10 @@ router.post('/', async function (req, res, next) {
 
 // router.put('/:id', async function (req, res, next) {
 //   try {
-//     const { name } = req.body
+//     const { email, name } = req.body
 
-//     const user = await User.findByIdAndUpdate(req.params.id, { email, name }, { new: true })
-//     res.json(user)
+//     const todo = await Todo.findByIdAndUpdate(req.params.id, { email, name }, { new: true })
+//     res.json(todo)
 //   } catch (e) {
 //     console.log(e)
 //     res.send(e)
@@ -52,8 +51,8 @@ router.post('/', async function (req, res, next) {
 
 // router.delete('/:id', async function (req, res, next) {
 //   try {
-//     const user = await User.findByIdAndRemove(req.params.id);
-//     res.json(user)
+//     const todo = await Todo.findByIdAndRemove(req.params.id);
+//     res.json(todo)
 //   } catch (e) {
 //     console.log(e)
 //     res.send(e)
