@@ -15,6 +15,16 @@ module.exports = function (db) {
     }
   });
 
+  router.get('/:id', async function (req, res, next) {
+    try {
+      const user = await collection.findOne({ _id: ObjectId(req.params.id) })
+      res.json(user)
+    } catch (e) {
+      console.log(e)
+      res.send(e)
+    }
+  });
+
   router.post('/', async function (req, res, next) {
     try {
       const { email, name } = req.body
