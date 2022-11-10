@@ -4,9 +4,9 @@ const Todo = require('../models/Todo')
 const User = require('../models/User')
 const { isTokenValid, Response } = require('../helpers/util')
 
-router.get('/', isTokenValid, async function (req, res, next) {
+router.get('/', async function (req, res, next) {
   try {
-    const todos = await Todo.find({executor: req.user._id}).populate('executor')
+    const todos = await Todo.find().populate('executor')
     res.json(new Response(todos))
   } catch (e) {
     console.log(e)

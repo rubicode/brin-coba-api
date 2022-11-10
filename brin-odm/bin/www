@@ -21,6 +21,21 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('jalan')
+  socket.on('addtodo', data => {
+    console.log('datang dari frontend', data)
+    socket.broadcast.emit('drawtodo', data);
+  });
+});
+
+
 /**
  * Listen on provided port, on all network interfaces.
  */
