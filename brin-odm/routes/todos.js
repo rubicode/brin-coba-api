@@ -2,11 +2,12 @@ var express = require('express');
 var router = express.Router();
 const Todo = require('../models/Todo')
 const User = require('../models/User')
+const { isTokenValid, Response } = require('../helpers/util')
 
-router.get('/', async function (req, res, next) {
+router.get('/', isTokenValid, async function (req, res, next) {
   try {
-    const todos = await Todo.find({}).populate('executor')
-    res.json(todos)
+    const todos = await Todo.find({executor: req.user._id}).populate('executor')
+    res.json(new Response(todos))
   } catch (e) {
     console.log(e)
     res.send(e)
@@ -25,7 +26,7 @@ router.get('/:id', async function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
   try {
-    const { title,userid } = req.body
+    const { title, userid } = req.body
     const user = await User.findById(userid);
     const todo = await Todo.create({ title, executor: user });
     user.todos.push(todo._id)

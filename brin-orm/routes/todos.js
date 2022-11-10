@@ -6,8 +6,8 @@ router.get('/', async function (req, res, next) {
   try {
     const todos = await Todo.findAll({
       include: [{
-          model: User
-        }]
+        model: User
+      }]
     })
     res.json(todos)
   } catch (e) {
@@ -22,7 +22,7 @@ router.get('/:id', async function (req, res, next) {
     res.json(todo)
   } catch (e) {
     console.log(e)
-    res.send(e)
+    res.status(500).json(e)
   }
 });
 
@@ -33,30 +33,42 @@ router.post('/', async function (req, res, next) {
     res.json(todo)
   } catch (e) {
     console.log(e)
-    res.send(e)
+    res.status(500).json(e)
   }
 });
 
-// router.put('/:id', async function (req, res, next) {
-//   try {
-//     const { email, name } = req.body
+router.put('/:id', async function (req, res, next) {
+  try {
+    const { title, complete } = req.body
+    const data = await Todo.update({
+      title,
+      complete
+    }, {
+      where: {
+        id: req.params.id
+      },
+      returning: true,
+      plain: true
+    })
+    res.json(data[1] ? data[1] : data)
+  } catch (e) {
+    console.log(e)
+    res.status(500).json(e)
+  }
+});
 
-//     const todo = await Todo.findByIdAndUpdate(req.params.id, { email, name }, { new: true })
-//     res.json(todo)
-//   } catch (e) {
-//     console.log(e)
-//     res.send(e)
-//   }
-// });
-
-// router.delete('/:id', async function (req, res, next) {
-//   try {
-//     const todo = await Todo.findByIdAndRemove(req.params.id);
-//     res.json(todo)
-//   } catch (e) {
-//     console.log(e)
-//     res.send(e)
-//   }
-// });
+router.delete('/:id', async function (req, res, next) {
+  try {
+    const todo = await Todo.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
+    res.json(todo)
+  } catch (e) {
+    console.log(e)
+    res.status(500).json(e)
+  }
+});
 
 module.exports = router;
